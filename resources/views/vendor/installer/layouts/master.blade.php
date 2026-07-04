@@ -19,7 +19,7 @@
         <div class="max-w-4xl w-full">
             <!-- Header -->
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">@yield('title') | Nulled shared by <a style='color:red;' href='https://www.vuinsider.com'>VUINSIDER.COM</a></h1>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">@yield('title')</h1>
                 <p class="text-gray-600">{{ trans('installer_messages.title') }}</p>
             </div>
 
