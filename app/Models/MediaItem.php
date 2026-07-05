@@ -67,14 +67,17 @@ class MediaItem extends Model implements HasMedia
         // Ensure storage is configured before registering conversions
         \App\Services\DynamicStorageService::configureDynamicDisks();
         
-        $this->addMediaConversion('thumb')
+        $conversion = $this->addMediaConversion('thumb')
             ->width(300)
             ->height(300)
             ->sharpen(10)
             ->quality(85)
             ->performOnCollections('images')
             ->nonQueued()
-            ->optimize()
             ->keepOriginalImageFormat();
+
+        if (config('media-library.enable_image_optimization')) {
+            $conversion->optimize();
+        }
     }
 }

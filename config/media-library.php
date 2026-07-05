@@ -1,5 +1,13 @@
 <?php
 
+$enableImageOptimization = env('MEDIA_ENABLE_IMAGE_OPTIMIZATION');
+
+if ($enableImageOptimization === null) {
+    $enableImageOptimization = function_exists('escapeshellarg') && function_exists('exec');
+} else {
+    $enableImageOptimization = filter_var($enableImageOptimization, FILTER_VALIDATE_BOOLEAN);
+}
+
 return [
     /*
      * The disk on which to store added files and derived images by default. Choose
@@ -50,11 +58,19 @@ return [
     'path_generator' => App\PathGenerators\MediaPathGenerator::class,
 
     /*
+     * Image optimization requires shell functions (escapeshellarg, exec) and
+     * external binaries (pngquant, jpegoptim, etc.). Shared hosts often disable
+     * those functions, so optimization is auto-disabled when unavailable.
+     * Set MEDIA_ENABLE_IMAGE_OPTIMIZATION=true in .env to force it on.
+     */
+    'enable_image_optimization' => $enableImageOptimization,
+
+    /*
      * Medialibrary will try to optimize all converted images by removing
      * metadata and applying a little bit of compression. These are
      * the optimizers that will be used by default.
      */
-    'image_optimizers' => [
+    'image_optimizers' => $enableImageOptimization ? [
         Spatie\ImageOptimizer\Optimizers\Jpegoptim::class => [
             '-m85', // set maximum quality to 85%
             '--strip-all', // this strips out all text information such as comments and EXIF data
@@ -86,7 +102,7 @@ return [
             '-mt', // multithreading for some speed improvements.
             '-q', '90', //quality factor that brings the least noticeable changes.
         ],
-    ],
+    ] : [],
 
     /*
      * These generators will be used to create an image of media files.
