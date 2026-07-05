@@ -1,12 +1,9 @@
 <?php
 
-$enableImageOptimization = env('MEDIA_ENABLE_IMAGE_OPTIMIZATION');
-
-if ($enableImageOptimization === null) {
-    $enableImageOptimization = function_exists('escapeshellarg') && function_exists('exec');
-} else {
-    $enableImageOptimization = filter_var($enableImageOptimization, FILTER_VALIDATE_BOOLEAN);
-}
+$enableImageOptimization = filter_var(
+    env('MEDIA_ENABLE_IMAGE_OPTIMIZATION', false),
+    FILTER_VALIDATE_BOOLEAN
+);
 
 return [
     /*
@@ -59,9 +56,9 @@ return [
 
     /*
      * Image optimization requires shell functions (escapeshellarg, exec) and
-     * external binaries (pngquant, jpegoptim, etc.). Shared hosts often disable
-     * those functions, so optimization is auto-disabled when unavailable.
-     * Set MEDIA_ENABLE_IMAGE_OPTIMIZATION=true in .env to force it on.
+     * external binaries (pngquant, jpegoptim, etc.). Disabled by default;
+     * set MEDIA_ENABLE_IMAGE_OPTIMIZATION=true on servers that support it.
+     * AppServiceProvider also disables this at runtime when shell is unavailable.
      */
     'enable_image_optimization' => $enableImageOptimization,
 

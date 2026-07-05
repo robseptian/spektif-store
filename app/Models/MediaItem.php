@@ -76,8 +76,8 @@ class MediaItem extends Model implements HasMedia
             ->nonQueued()
             ->keepOriginalImageFormat();
 
-        if (config('media-library.enable_image_optimization')) {
-            $conversion->optimize();
+        if (! config('media-library.enable_image_optimization')) {
+            $conversion->nonOptimized();
         }
     }
 }
